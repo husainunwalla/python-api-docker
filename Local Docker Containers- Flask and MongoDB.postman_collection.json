@@ -1,0 +1,308 @@
+{
+	"info": {
+		"_postman_id": "f1a3a184-ab15-4726-abef-5fd70c0f5d65",
+		"name": "Local Docker Containers: Flask and MongoDB",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Sign Up",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\":\"myusername\",\r\n    \"password\":\"1234\",\r\n    \"email\":\"myemail@gmail.com\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/signup",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"signup"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login (get token here)",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"password\":\"1234\",\r\n    \"email\":\"myemail@gmail.com\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Log out of all devices (req token)",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjYzZjkxZThhOTkzNGNlN2UzZTRmMWQ2ZCIsInRva2VuX2NyZWF0aW9uX3RpbWUiOiIxNjc3MjcwNjcxLjE4NTI3NyJ9.Ya9vdEIxqFsjH39AHDVf9FJTA2dLOWTn_Lpt3C8s-sk",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/logout-all",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"logout-all"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all posts",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/posts/all?user_id=63f9252c1bec5d38e0c70e0c",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"posts",
+						"all"
+					],
+					"query": [
+						{
+							"key": "user_id",
+							"value": "63f9252c1bec5d38e0c70e0c"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all posts of user",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/posts/user?user_id=63f9252c1bec5d38e0c70e0c",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"posts",
+						"user"
+					],
+					"query": [
+						{
+							"key": "user_id",
+							"value": "63f9252c1bec5d38e0c70e0c"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get post",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjYzZjkxZThhOTkzNGNlN2UzZTRmMWQ2ZCIsInRva2VuX2NyZWF0aW9uX3RpbWUiOiIxNjc3MjcyNTQ2LjYyMTI4NyJ9.3wtKXn-4JypaZ-iUnQXIovuWwcuFvsGCM1VzlcTw3k8",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/posts?post_id=63f926cc38cbdb4b04724a33",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"posts"
+					],
+					"query": [
+						{
+							"key": "post_id",
+							"value": "63f926cc38cbdb4b04724a33"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create post (req token)",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjYzZjkxZThhOTkzNGNlN2UzZTRmMWQ2ZCIsInRva2VuX2NyZWF0aW9uX3RpbWUiOiIxNjc3MjcyNTQ2LjYyMTI4NyJ9.3wtKXn-4JypaZ-iUnQXIovuWwcuFvsGCM1VzlcTw3k8",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\":\"new title\",\r\n    \"content\":\"new content\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/posts",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"posts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update post (req token)",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjYzZjkxZThhOTkzNGNlN2UzZTRmMWQ2ZCIsInRva2VuX2NyZWF0aW9uX3RpbWUiOiIxNjc3MjcwNjcxLjE4NTI3NyJ9.Ya9vdEIxqFsjH39AHDVf9FJTA2dLOWTn_Lpt3C8s-sk",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\":\"new title\",\r\n    \"content\":\"updated content\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/posts?post_id=63f9220e7da956f674d19066",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"posts"
+					],
+					"query": [
+						{
+							"key": "post_id",
+							"value": "63f9220e7da956f674d19066"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete post (req token)",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjYzZjkxZThhOTkzNGNlN2UzZTRmMWQ2ZCIsInRva2VuX2NyZWF0aW9uX3RpbWUiOiIxNjc3MjcwNjcxLjE4NTI3NyJ9.Ya9vdEIxqFsjH39AHDVf9FJTA2dLOWTn_Lpt3C8s-sk",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/posts?post_id=63f9220e7da956f674d19066",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"posts"
+					],
+					"query": [
+						{
+							"key": "post_id",
+							"value": "63f9220e7da956f674d19066"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
