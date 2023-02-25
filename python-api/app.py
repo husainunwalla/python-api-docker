@@ -15,9 +15,17 @@ mongodb_url = os.environ.get('MONGODB_URL')
 secret_key = os.environ.get('SECRET_KEY')
 app.secret_key =  secret_key
 mongo_client = MongoClient(mongodb_url)
+
+'''Local MongoDB testing client
+Use this if you are testing locally and do not have an AWS account
+Uncomment the line below and comment out the line above
+'''
+#mongo_client = MongoClient('mongodb://localhost:27017/')
+
 db = mongo_client.my_database
 users_db = db['users']
 posts_db = db['posts']
+recipes_collection = db['recipes']
 
 # define error handlers
 @app.errorhandler(400)
@@ -47,6 +55,24 @@ class Post:
         self.title = title
         self.content = content
         self.creation_time = str(datetime.datetime.utcnow().timestamp())
+
+class Recipe:
+    def __init__(self, name, description, ingredients, instructions, image_url):
+        self.name = name
+        self.description = description
+        self.ingredients = ingredients
+        self.instructions = instructions
+        self.image_url = image_url
+
+    def to_dict(self):
+        return {
+            'name': self.name,
+            'description': self.description,
+            'ingredients': self.ingredients,
+            'instructions': self.instructions,
+            'image_url': self.image_url
+        }
+
 
 # Decorator to check for token
 def token_required(f):
@@ -171,7 +197,7 @@ def get_posts():
 
 # get all posts from user
 @app.route('/posts/user', methods=['GET'])
-def get_posts():
+def get_posts_user():
     # get argument from query
     args = request.args
     user_id = args.get('user_id')
@@ -288,5 +314,35 @@ def delete_post(current_user):
     else:
         raise ValueError('Post not found')
 
+@app.route('/recipes', methods=['POST'])
+def add_recipe():
+    # Get the recipe data from the request form
+    name = request.form['name']
+    description = request.form['description']
+    ingredients = request.form['ingredients'].split('\n')
+    instructions = request.form['instructions'].split('\n')
+    image_url = request.form['image_url']
+
+    # Create a Recipe object
+    recipe = Recipe(name, description, ingredients, instructions, image_url)
+
+    # Insert the recipe in the database
+    recipe_dict = recipe.to_dict()
+    recipe_id = recipes_collection.insert_one(recipe_dict).inserted_id
+
+    # Return a response indicating that the recipe was added
+    return f'Recipe added with ID {recipe_id}'
+
+@app.route('/recipes/<id>', methods=['GET'])
+def get_recipe(id):
+    recipe = recipes_collection.find_one({'_id': id})
+    if recipe:
+        return jsonify(recipe)
+    else:
+        return jsonify({'message': 'Recipe not found.'}), 404
+
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
+
+    #app.run for local testing
+    # app.run(debug=True)
