@@ -7,6 +7,7 @@ import os
 import datetime
 from functools import wraps
 import json
+from typing import List
 
 app = Flask(__name__)
 
@@ -26,6 +27,7 @@ db = mongo_client.my_database
 users_db = db['users']
 posts_db = db['posts']
 recipes_collection = db['recipes']
+dietplans_db = db['diet_plans']
 
 # define error handlers
 @app.errorhandler(400)
@@ -60,8 +62,8 @@ class Meal:
     def __init__(self, name, description, ingredients, instructions):
         self.name = name
         self.description = description
-        self.ingredients = ingredients
-        self.instructions = instructions
+        # self.ingredients = ingredients
+        # self.instructions = instructions
 
     def to_dict(self):
         return {
@@ -81,18 +83,21 @@ class DietPlanDay:
         }
     
 class DietPlan:
-    def __init__(self, name, description, image_url, user_id):
+    def __init__(self, name, description, image_url, user_id,daydietplans: List[DietPlanDay]):
         self.name = name
         self.description = description
         self.image_url = image_url
         self.user_id = user_id
+        self.daydietplans = daydietplans
+        self.creation_time = str(datetime.datetime.utcnow().timestamp())
 
     def to_dict(self):
         return {
             'name': self.name,
             'description': self.description,
             'image_url': self.image_url,
-            'user_id': self.user_id
+            'user_id': self.user_id,
+            'daydietplans':self.daydietplans,
         }
 
 
@@ -248,8 +253,7 @@ def get_post():
     if post:
         # convert ObjectId to string
         post["_id"] = str(post["_id"])
-
-    # return post
+        # return post
         return jsonify(post)
     else:
         raise ValueError('Post not found')
@@ -336,6 +340,115 @@ def delete_post(current_user):
     else:
         raise ValueError('Post not found')
 
+# create diet plan
+@app.route('/dietplans', methods=['POST'])
+@token_required
+def create_dietplan(current_user):
+    # parameters of string
+    parameters = ['name','description','image_url','daydietplans']
+    # ensure each value is in json
+    for p in parameters:
+        if not p in request.json:
+            raise ValueError('{} parameter is missing'.format(p))
+    
+    # get the values
+    name = request.json['name']
+    description = request.json['description']
+    image_url = request.json['image_url']
+    user_id = str(current_user['_id'])    
+    daydietplans = request.json['daydietplans']
+    # create diet plan value
+    new_dietplan = DietPlan(name, description, image_url, user_id,daydietplans)
+    # create diet plan
+    dietplan_id = dietplans_db.insert_one(new_dietplan.__dict__).inserted_id
+    # retrieve diet plan
+    new_dietplan = dietplans_db.find_one({'_id': dietplan_id})
+    # convert ObjectId to string
+    new_dietplan["_id"] = str(new_dietplan["_id"])    
+    
+    return jsonify(new_dietplan)
+
+# update diet plan
+@app.route('/dietplans', methods=['GET'])
+def get_dietplan():
+    # get argument from query
+    args = request.args
+    dietplan_id = args.get('dietplan_id')
+
+    # check if id is retrieved
+    if dietplan_id == None or dietplan_id == "":
+        raise ValueError('dietplan_id is missing')
+
+    # retrieve diet plan
+    dietplan = dietplans_db.find_one({'_id': ObjectId(dietplan_id)})
+
+    # check if post was retrieved
+    if dietplan:
+        # convert ObjectId to string
+        dietplan["_id"] = str(dietplan["_id"])
+        # return post
+        return jsonify(dietplan)
+    else:
+        raise ValueError('Post not found')
+
+@app.route('/dietplans', methods=['PUT'])
+@token_required
+def update_dietplan(current_user):
+    # get argument from query
+    args = request.args
+    dietplan_id = args.get('dietplan_id')
+    # check if id is retrieved
+    if dietplan_id == None or dietplan_id == "":
+        raise ValueError('dietplan_id is missing')
+
+
+    # parameters of string
+    parameters = ['name','description','image_url','daydietplans']
+    # ensure each value is in json
+    for p in parameters:
+        if not p in request.json:
+            raise ValueError('{} parameter is missing'.format(p))
+
+    # convert object id to string as well
+    dietplan_id = str(current_user['_id'])
+
+    name = request.json['name']
+    description = request.json['description']
+    image_url = request.json['image_url']
+    user_id = str(current_user['_id'])    
+    daydietplans = request.json['daydietplans']
+
+    result = dietplans_db.update_one({'_id': ObjectId(id),'user_id':user_id}, {'$set': {
+        'name': name,
+        'description': description,
+        'image_url':image_url,
+        'daydietplans': daydietplans,        
+        'creation_time': datetime.datetime.utcnow().timestamp()
+    }})
+
+    if result.modified_count == 1:
+        return jsonify({'message': 'Diet plan updated successfully!'})
+    else:
+        raise ValueError('Post not found')
+
+@app.route('/dietplans', methods=['DELETE'])
+@token_required
+def delete_dietplan(current_user):
+    # get argument from query
+    args = request.args
+    dietplan_id = args.get('dietplan_id')
+    # check if id is retrieved
+    if dietplan_id == None or dietplan_id == "":
+        raise ValueError('dietplan_id is missing') 
+    # convert object id to string as well
+    user_id = str(current_user['_id'])  
+    # delete a post 
+    result = posts_db.delete_one({'_id': ObjectId(dietplan_id), 'user_id':user_id})
+    # get result from deleting post
+    if result.deleted_count == 1:
+        return jsonify({'message': 'Post deleted successfully!'})
+    else:
+        raise ValueError('Post not found')
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
