@@ -20,10 +20,10 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:5000/signup",
+					"raw": "http://{{address}}:5000/signup",
 					"protocol": "http",
 					"host": [
-						"localhost"
+						"{{address}}"
 					],
 					"port": "5000",
 					"path": [
@@ -48,10 +48,10 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:5000/login",
+					"raw": "http://{{address}}:5000/login",
 					"protocol": "http",
 					"host": [
-						"localhost"
+						"{{address}}"
 					],
 					"port": "5000",
 					"path": [
@@ -77,10 +77,10 @@
 				"method": "POST",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:5000/logout-all",
+					"raw": "http://{{address}}:5000/logout-all",
 					"protocol": "http",
 					"host": [
-						"localhost"
+						"{{address}}"
 					],
 					"port": "5000",
 					"path": [
@@ -106,21 +106,15 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:5000/posts/all?user_id=63f9252c1bec5d38e0c70e0c",
+					"raw": "http://{{address}}:5000/posts/all",
 					"protocol": "http",
 					"host": [
-						"localhost"
+						"{{address}}"
 					],
 					"port": "5000",
 					"path": [
 						"posts",
 						"all"
-					],
-					"query": [
-						{
-							"key": "user_id",
-							"value": "63f9252c1bec5d38e0c70e0c"
-						}
 					]
 				}
 			},
@@ -132,10 +126,10 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:5000/posts/user?user_id=63f9252c1bec5d38e0c70e0c",
+					"raw": "http://{{address}}:5000/posts/user?user_id=63f9252c1bec5d38e0c70e0c",
 					"protocol": "http",
 					"host": [
-						"localhost"
+						"{{address}}"
 					],
 					"port": "5000",
 					"path": [
@@ -155,23 +149,13 @@
 		{
 			"name": "Get post",
 			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjYzZjkxZThhOTkzNGNlN2UzZTRmMWQ2ZCIsInRva2VuX2NyZWF0aW9uX3RpbWUiOiIxNjc3MjcyNTQ2LjYyMTI4NyJ9.3wtKXn-4JypaZ-iUnQXIovuWwcuFvsGCM1VzlcTw3k8",
-							"type": "string"
-						}
-					]
-				},
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:5000/posts?post_id=63f926cc38cbdb4b04724a33",
+					"raw": "http://{{address}}:5000/posts?post_id=63f926cc38cbdb4b04724a33",
 					"protocol": "http",
 					"host": [
-						"localhost"
+						"{{address}}"
 					],
 					"port": "5000",
 					"path": [
@@ -212,10 +196,10 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:5000/posts",
+					"raw": "http://{{address}}:5000/posts",
 					"protocol": "http",
 					"host": [
-						"localhost"
+						"{{address}}"
 					],
 					"port": "5000",
 					"path": [
@@ -250,10 +234,10 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:5000/posts?post_id=63f9220e7da956f674d19066",
+					"raw": "http://{{address}}:5000/posts?post_id=63f9220e7da956f674d19066",
 					"protocol": "http",
 					"host": [
-						"localhost"
+						"{{address}}"
 					],
 					"port": "5000",
 					"path": [
@@ -285,10 +269,10 @@
 				"method": "DELETE",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:5000/posts?post_id=63f9220e7da956f674d19066",
+					"raw": "http://{{address}}:5000/posts?post_id=63f9220e7da956f674d19066",
 					"protocol": "http",
 					"host": [
-						"localhost"
+						"{{address}}"
 					],
 					"port": "5000",
 					"path": [
@@ -303,6 +287,175 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Get dietplan",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{address}}:5000/dietplans?dietplan_id=63fe6d8b41d05bdcdf701728",
+					"protocol": "http",
+					"host": [
+						"{{address}}"
+					],
+					"port": "5000",
+					"path": [
+						"dietplans"
+					],
+					"query": [
+						{
+							"key": "dietplan_id",
+							"value": "63fe6d8b41d05bdcdf701728"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create dietplan (req token)",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjYzZjkxZThhOTkzNGNlN2UzZTRmMWQ2ZCIsInRva2VuX2NyZWF0aW9uX3RpbWUiOiIxNjc3NjE4NDYzLjUzMDIyMiJ9.XWmS5EEjyBL3q_yZgGoZOVAmru1VZDkbsnwtQrXhfnw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"My Diet Plan\",\r\n  \"description\": \"A description of my diet plan\",\r\n  \"image_url\":\"link\",\r\n  \"daydietplans\": [\r\n    {\r\n      \"meals\": [\r\n        {\"name\": \"Breakfast\", \"description\": \"A healthy breakfast\"},\r\n        {\"name\": \"Lunch\", \"description\": \"A healthy lunch\"},\r\n        {\"name\": \"Dinner\", \"description\": \"A healthy dinner\"}\r\n      ]\r\n    },\r\n    {\r\n      \"meals\": [\r\n        {\"name\": \"Breakfast\", \"description\": \"A healthy breakfast\"},\r\n        {\"name\": \"Lunch\", \"description\": \"A healthy lunch\"},\r\n        {\"name\": \"Dinner\", \"description\": \"A healthy dinner\"}\r\n      ]\r\n    }\r\n  ]\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{address}}:5000/dietplans",
+					"protocol": "http",
+					"host": [
+						"{{address}}"
+					],
+					"port": "5000",
+					"path": [
+						"dietplans"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update dietplan (req token)",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjYzZjkxZThhOTkzNGNlN2UzZTRmMWQ2ZCIsInRva2VuX2NyZWF0aW9uX3RpbWUiOiIxNjc3NjE4NDYzLjUzMDIyMiJ9.XWmS5EEjyBL3q_yZgGoZOVAmru1VZDkbsnwtQrXhfnw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"My Diet Plan\",\r\n  \"description\": \"new description\",\r\n  \"image_url\":\"link\",\r\n  \"daydietplans\": [\r\n    {\r\n      \"meals\": [\r\n        {\"name\": \"Breakfast\", \"description\": \"A healthy breakfast\"},\r\n        {\"name\": \"Lunch\", \"description\": \"A healthy lunch\"},\r\n        {\"name\": \"Dinner\", \"description\": \"A healthy dinner\"}\r\n      ]\r\n    },\r\n    {\r\n      \"meals\": [\r\n        {\"name\": \"Breakfast\", \"description\": \"A healthy breakfast\"},\r\n        {\"name\": \"Lunch\", \"description\": \"A healthy lunch\"},\r\n        {\"name\": \"Dinner\", \"description\": \"A healthy dinner\"}\r\n      ]\r\n    }\r\n  ]\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{address}}:5000/dietplans?dietplan_id=63fe6d8b41d05bdcdf701728",
+					"protocol": "http",
+					"host": [
+						"{{address}}"
+					],
+					"port": "5000",
+					"path": [
+						"dietplans"
+					],
+					"query": [
+						{
+							"key": "dietplan_id",
+							"value": "63fe6d8b41d05bdcdf701728"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete dietplan (req token)",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjYzZjkxZThhOTkzNGNlN2UzZTRmMWQ2ZCIsInRva2VuX2NyZWF0aW9uX3RpbWUiOiIxNjc3NjE4NDYzLjUzMDIyMiJ9.XWmS5EEjyBL3q_yZgGoZOVAmru1VZDkbsnwtQrXhfnw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://{{address}}:5000/dietplans?dietplan_id=63fe6d8b41d05bdcdf701728",
+					"protocol": "http",
+					"host": [
+						"{{address}}"
+					],
+					"port": "5000",
+					"path": [
+						"dietplans"
+					],
+					"query": [
+						{
+							"key": "dietplan_id",
+							"value": "63fe6d8b41d05bdcdf701728"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "address",
+			"value": "13.52.68.209",
+			"type": "default"
 		}
 	]
 }

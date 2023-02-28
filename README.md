@@ -13,13 +13,13 @@ docker run -d -p 5000:5000 --name myapp-container -e MONGODB_URL=mongodb://mongo
 ```
 
 ## Postman Setup:
-1. Use the following address when making api calls locally: http://localhost:5000
+1. If you plan to run the containers locally, set the "address" variable to "localhost"
 ### Special Instructions:
 * To get a token, use the following api route: /login
 * The following api routes require a token: 
     * log out of all devices
-    * create, update, and delete posts
-* To include newly received token:
+    * create, update, and delete posts, dietplans, and so on
+* To include newly received token for a CRUD api:
     1. Go to the Auth tab
     2. For 'Type', select 'Bearer Token'
     3. Enter the token with out quotes
