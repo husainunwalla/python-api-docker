@@ -56,13 +56,12 @@ class Post:
         self.content = content
         self.creation_time = str(datetime.datetime.utcnow().timestamp())
 
-class Recipe:
-    def __init__(self, name, description, ingredients, instructions, image_url):
+class Meal:
+    def __init__(self, name, description, ingredients, instructions):
         self.name = name
         self.description = description
         self.ingredients = ingredients
         self.instructions = instructions
-        self.image_url = image_url
 
     def to_dict(self):
         return {
@@ -70,7 +69,30 @@ class Recipe:
             'description': self.description,
             'ingredients': self.ingredients,
             'instructions': self.instructions,
-            'image_url': self.image_url
+        }
+    
+class DietPlanDay:
+    def __init__(self, meals):
+        self.meals = meals
+
+    def to_dict(self):
+        return {
+            'meals': self.meals,
+        }
+    
+class DietPlan:
+    def __init__(self, name, description, image_url, user_id):
+        self.name = name
+        self.description = description
+        self.image_url = image_url
+        self.user_id = user_id
+
+    def to_dict(self):
+        return {
+            'name': self.name,
+            'description': self.description,
+            'image_url': self.image_url,
+            'user_id': self.user_id
         }
 
 
@@ -314,32 +336,6 @@ def delete_post(current_user):
     else:
         raise ValueError('Post not found')
 
-@app.route('/recipes', methods=['POST'])
-def add_recipe():
-    # Get the recipe data from the request form
-    name = request.form['name']
-    description = request.form['description']
-    ingredients = request.form['ingredients'].split('\n')
-    instructions = request.form['instructions'].split('\n')
-    image_url = request.form['image_url']
-
-    # Create a Recipe object
-    recipe = Recipe(name, description, ingredients, instructions, image_url)
-
-    # Insert the recipe in the database
-    recipe_dict = recipe.to_dict()
-    recipe_id = recipes_collection.insert_one(recipe_dict).inserted_id
-
-    # Return a response indicating that the recipe was added
-    return f'Recipe added with ID {recipe_id}'
-
-@app.route('/recipes/<id>', methods=['GET'])
-def get_recipe(id):
-    recipe = recipes_collection.find_one({'_id': id})
-    if recipe:
-        return jsonify(recipe)
-    else:
-        return jsonify({'message': 'Recipe not found.'}), 404
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
