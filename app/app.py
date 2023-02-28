@@ -391,6 +391,7 @@ def get_dietplan():
     else:
         raise ValueError('Post not found')
 
+# update dietplan
 @app.route('/dietplans', methods=['PUT'])
 @token_required
 def update_dietplan(current_user):
@@ -401,7 +402,6 @@ def update_dietplan(current_user):
     if dietplan_id == None or dietplan_id == "":
         raise ValueError('dietplan_id is missing')
 
-
     # parameters of string
     parameters = ['name','description','image_url','daydietplans']
     # ensure each value is in json
@@ -409,16 +409,13 @@ def update_dietplan(current_user):
         if not p in request.json:
             raise ValueError('{} parameter is missing'.format(p))
 
-    # convert object id to string as well
-    dietplan_id = str(current_user['_id'])
-
     name = request.json['name']
     description = request.json['description']
     image_url = request.json['image_url']
     user_id = str(current_user['_id'])    
     daydietplans = request.json['daydietplans']
 
-    result = dietplans_db.update_one({'_id': ObjectId(id),'user_id':user_id}, {'$set': {
+    result = dietplans_db.update_one({'_id': ObjectId(dietplan_id),'user_id':user_id}, {'$set': {
         'name': name,
         'description': description,
         'image_url':image_url,
@@ -431,6 +428,7 @@ def update_dietplan(current_user):
     else:
         raise ValueError('Post not found')
 
+# delete dietplan
 @app.route('/dietplans', methods=['DELETE'])
 @token_required
 def delete_dietplan(current_user):
@@ -443,12 +441,12 @@ def delete_dietplan(current_user):
     # convert object id to string as well
     user_id = str(current_user['_id'])  
     # delete a post 
-    result = posts_db.delete_one({'_id': ObjectId(dietplan_id), 'user_id':user_id})
+    result = dietplans_db.delete_one({'_id': ObjectId(dietplan_id), 'user_id':user_id})
     # get result from deleting post
     if result.deleted_count == 1:
-        return jsonify({'message': 'Post deleted successfully!'})
+        return jsonify({'message': 'Diet plan deleted successfully!'})
     else:
-        raise ValueError('Post not found')
+        raise ValueError('Diet plan not found')
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
