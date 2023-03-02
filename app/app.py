@@ -12,6 +12,8 @@ from models.user import User
 from models.meal import Meal
 from models.dietPlanDay import DietPlanDay
 from models.dietPlan import DietPlan
+import firebase_admin
+from firebase_admin import firestore
 
 app = Flask(__name__)
 
@@ -32,6 +34,10 @@ users_db = db['users']
 posts_db = db['posts']
 recipes_collection = db['recipes']
 dietplans_db = db['diet_plans']
+
+firebase_app = firebase_admin.initialize_app()
+firebase_db = firestore.client()
+firebase_dietplans_collection_ref = firebase_db.collection('diet_plans')
 
 # define error handlers
 @app.errorhandler(400)
@@ -318,6 +324,14 @@ def create_dietplan(current_user):
     new_dietplan = dietplans_db.find_one({'_id': dietplan_id})
     # convert ObjectId to string
     new_dietplan["_id"] = str(new_dietplan["_id"])    
+
+    data_for_firebase = {
+    'name': new_dietplan['name'],
+    'email': current_user['email'],
+    }
+
+    doc_ref = firebase_dietplans_collection_ref.add(data_for_firebase)
+
     
     return jsonify(new_dietplan)
 
