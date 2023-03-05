@@ -13,7 +13,7 @@ from models.meal import Meal
 from models.dietPlanDay import DietPlanDay
 from models.dietPlan import DietPlan
 import firebase_admin
-from firebase_admin import firestore
+from firebase_admin import credentials, firestore
 
 app = Flask(__name__)
 
@@ -35,7 +35,8 @@ posts_db = db['posts']
 recipes_collection = db['recipes']
 dietplans_db = db['diet_plans']
 
-firebase_app = firebase_admin.initialize_app()
+cred = credentials.Certificate("../serviceAccountKey.json")
+firebase_admin.initialize_app(cred)
 firebase_db = firestore.client()
 firebase_dietplans_collection_ref = firebase_db.collection('diet_plans')
 
