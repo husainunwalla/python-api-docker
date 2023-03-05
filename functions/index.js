@@ -1,6 +1,9 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
-admin.initializeApp();
+const serviceAccount = require("../serviceAccountKey.json");
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount)
+});
 
 // Attach a Firestore onCreate trigger
 exports.sendNotificationOnCreate = functions.firestore
