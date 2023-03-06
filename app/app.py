@@ -198,10 +198,12 @@ def login():
     
 # get user data
 @app.route('/user', methods=['GET'])
-@token_required
-def get_user(current_user):
+def get_user():
     # return user data
-    return jsonify({'user': current_user})
+    user_id = request.args.get('user_id')
+    user = users_db.find_one({'_id': ObjectId(user_id)})
+    user.remove(user['password'])
+    return jsonify({'user': user})
 
 # user logout and expires previous tokens
 @app.route('/logout-all', methods=['POST'])
