@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify, session, request, make_response
+from flask_paginate import Pagination
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -194,6 +195,13 @@ def login():
         return jsonify({'message': 'Login successful!','token': str(token)})
     else:
         return jsonify({'message': 'Invalid password'}), 401
+    
+# get user data
+@app.route('/user', methods=['GET'])
+@token_required
+def get_user(current_user):
+    # return user data
+    return jsonify({'user': current_user})
 
 # user logout and expires previous tokens
 @app.route('/logout-all', methods=['POST'])
@@ -447,6 +455,18 @@ def delete_dietplan(current_user):
         return jsonify({'message': 'Diet plan deleted successfully!'})
     else:
         raise ValueError('Diet plan not found')
+    
+#get home page plans
+@app.route('/home_page_dietplans', methods=['GET'])
+def retrieve():
+    PER_PAGE=5
+    diet_plan_list=list(dietplans_db.find())
+    try:
+        page = int(request.args.get('page', 2))
+    except ValueError:
+        page = 1
+    pagination = Pagination(page=page,per_page=PER_PAGE, total=len(diet_plan_list), record_name='Diet Plans')
+    return jsonify(List=List, pagination=pagination)
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
