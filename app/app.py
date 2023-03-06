@@ -192,7 +192,7 @@ def login():
         session['user_id'] = str(user['_id'])
         # encode to create token
         token = jwt.encode({'id': str(user['_id']), 'token_creation_time': str(datetime.datetime.utcnow().timestamp())}, secret_key, algorithm="HS256")
-        return jsonify({'message': 'Login successful!','token': str(token)})
+        return jsonify({'message': 'Login successful!','token': str(token), 'user_id': str(user['_id'])})
     else:
         return jsonify({'message': 'Invalid password'}), 401
     
@@ -461,17 +461,14 @@ def delete_dietplan(current_user):
 #get home page plans
 @app.route('/home_page_dietplans', methods=['GET'])
 def retrieve():
-    PER_PAGE=5
-    diet_plan_list=list(dietplans_db.find())
-    try:
-        page = int(request.args.get('page', 2))
-    except ValueError:
-        page = 1
-    pagination = Pagination(page=page,per_page=PER_PAGE, total=len(diet_plan_list), record_name='Diet Plans')
-    return jsonify(List=List, pagination=pagination)
+    page = int(request.args.get('page', 1))
+    limit = int(request.args.get('limit', 10))
+    offset = (page - 1) * limit
+    data = dietplans_db.find().skip(offset).limit(limit)
+    return jsonify(list(data))
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
 
     #app.run for local testing
-    # app.run(debug=True)
+    #app.run(port = 8000,debug=True)
