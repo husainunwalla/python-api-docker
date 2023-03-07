@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify, session, request, make_response
+from flask_paginate import Pagination
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -191,9 +192,19 @@ def login():
         session['user_id'] = str(user['_id'])
         # encode to create token
         token = jwt.encode({'id': str(user['_id']), 'token_creation_time': str(datetime.datetime.utcnow().timestamp())}, secret_key, algorithm="HS256")
-        return jsonify({'message': 'Login successful!','token': str(token)})
+        return jsonify({'message': 'Login successful!','token': str(token), 'user_id': str(user['_id'])})
     else:
         return jsonify({'message': 'Invalid password'}), 401
+    
+# get user data
+@app.route('/user', methods=['GET'])
+def get_user():
+    # return user data
+    user_id = request.args.get('user_id')
+    user = users_db.find_one({'_id': ObjectId(user_id)})
+    user["_id"] = str(user["_id"])
+    user.pop('password')
+    return jsonify({'user': user})
 
 # user logout and expires previous tokens
 @app.route('/logout-all', methods=['POST'])
@@ -382,14 +393,28 @@ def get_dietplan():
     # retrieve diet plan
     dietplan = dietplans_db.find_one({'_id': ObjectId(dietplan_id)})
 
-    # check if post was retrieved
+    # check if dietplan was retrieved
     if dietplan:
         # convert ObjectId to string
         dietplan["_id"] = str(dietplan["_id"])
-        # return post
+        # return dietplan
         return jsonify(dietplan)
     else:
-        raise ValueError('Post not found')
+        raise ValueError('Dietplan not found')
+
+# get all dietplans from user
+@app.route('/dietplans/user', methods=['GET'])
+def get_dietplans_user():
+    # get argument from query
+    args = request.args
+    user_id = args.get('user_id')
+    # create dietplan array
+    dietplans = []
+    # append each dietplan from db to array
+    for dietplan in dietplans_db.find({'user_id':user_id}):
+        dietplan['_id'] = str(dietplan['_id'])
+        dietplans.append(dietplan)    
+    return jsonify({'dietplans': dietplans})
 
 # update dietplan
 @app.route('/dietplans', methods=['PUT'])
@@ -426,7 +451,7 @@ def update_dietplan(current_user):
     if result.modified_count == 1:
         return jsonify({'message': 'Diet plan updated successfully!'})
     else:
-        raise ValueError('Post not found')
+        raise ValueError('Dietplan not found')
 
 # delete dietplan
 @app.route('/dietplans', methods=['DELETE'])
@@ -440,16 +465,30 @@ def delete_dietplan(current_user):
         raise ValueError('dietplan_id is missing') 
     # convert object id to string as well
     user_id = str(current_user['_id'])  
-    # delete a post 
+    # delete a dietplan 
     result = dietplans_db.delete_one({'_id': ObjectId(dietplan_id), 'user_id':user_id})
-    # get result from deleting post
+    # get result from deleting dietplan
     if result.deleted_count == 1:
         return jsonify({'message': 'Diet plan deleted successfully!'})
     else:
         raise ValueError('Diet plan not found')
+    
+#get home page plans
+@app.route('/home_page_dietplans', methods=['GET'])
+def retrieve():
+    page = int(request.args.get('page', 1))
+    limit = int(request.args.get('limit', 10))
+    offset = (page - 1) * limit
+    # create dietplan array
+    dietplans = []    
+    # append each dietplan from db to array
+    for dietplan in dietplans_db.find().skip(offset).limit(limit):
+        dietplan['_id'] = str(dietplan['_id'])
+        dietplans.append(dietplan)    
+    return jsonify({'dietplans': dietplans})
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
 
     #app.run for local testing
-    # app.run(debug=True)
+    #app.run(port = 8000,debug=True)
