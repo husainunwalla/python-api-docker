@@ -202,7 +202,8 @@ def get_user():
     # return user data
     user_id = request.args.get('user_id')
     user = users_db.find_one({'_id': ObjectId(user_id)})
-    user.remove(user['password'])
+    user["_id"] = str(user["_id"])
+    user.pop('password')
     return jsonify({'user': user})
 
 # user logout and expires previous tokens
@@ -392,14 +393,28 @@ def get_dietplan():
     # retrieve diet plan
     dietplan = dietplans_db.find_one({'_id': ObjectId(dietplan_id)})
 
-    # check if post was retrieved
+    # check if dietplan was retrieved
     if dietplan:
         # convert ObjectId to string
         dietplan["_id"] = str(dietplan["_id"])
-        # return post
+        # return dietplan
         return jsonify(dietplan)
     else:
-        raise ValueError('Post not found')
+        raise ValueError('Dietplan not found')
+
+# get all dietplans from user
+@app.route('/dietplans/user', methods=['GET'])
+def get_dietplans_user():
+    # get argument from query
+    args = request.args
+    user_id = args.get('user_id')
+    # create dietplan array
+    dietplans = []
+    # append each dietplan from db to array
+    for dietplan in dietplans_db.find({'user_id':user_id}):
+        dietplan['_id'] = str(dietplan['_id'])
+        dietplans.append(dietplan)    
+    return jsonify({'dietplans': dietplans})
 
 # update dietplan
 @app.route('/dietplans', methods=['PUT'])
@@ -436,7 +451,7 @@ def update_dietplan(current_user):
     if result.modified_count == 1:
         return jsonify({'message': 'Diet plan updated successfully!'})
     else:
-        raise ValueError('Post not found')
+        raise ValueError('Dietplan not found')
 
 # delete dietplan
 @app.route('/dietplans', methods=['DELETE'])
@@ -450,9 +465,9 @@ def delete_dietplan(current_user):
         raise ValueError('dietplan_id is missing') 
     # convert object id to string as well
     user_id = str(current_user['_id'])  
-    # delete a post 
+    # delete a dietplan 
     result = dietplans_db.delete_one({'_id': ObjectId(dietplan_id), 'user_id':user_id})
-    # get result from deleting post
+    # get result from deleting dietplan
     if result.deleted_count == 1:
         return jsonify({'message': 'Diet plan deleted successfully!'})
     else:
@@ -464,8 +479,13 @@ def retrieve():
     page = int(request.args.get('page', 1))
     limit = int(request.args.get('limit', 10))
     offset = (page - 1) * limit
-    data = dietplans_db.find().skip(offset).limit(limit)
-    return jsonify(list(data))
+    # create dietplan array
+    dietplans = []    
+    # append each dietplan from db to array
+    for dietplan in dietplans_db.find().skip(offset).limit(limit):
+        dietplan['_id'] = str(dietplan['_id'])
+        dietplans.append(dietplan)    
+    return jsonify({'dietplans': dietplans})
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
