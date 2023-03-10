@@ -165,8 +165,14 @@ def signup():
     new_user = User(username, email, hashed_password)
     user_id = users_db.insert_one(new_user.__dict__).inserted_id
 
-    # Return a success message and the user ID
-    return jsonify({'message': 'User created','user_id': str(user_id)})
+    # retrieve user from collection
+    user = db.users.find_one({'email': email})
+
+    # Store the user ID in the session
+    session['user_id'] = str(user['_id'])
+    # encode to create token
+    token = jwt.encode({'id': str(user['_id']), 'token_creation_time': str(datetime.datetime.utcnow().timestamp())}, secret_key, algorithm="HS256")
+    return jsonify({'message': 'User created. Login successful!','token': str(token), 'user_id': str(user['_id'])})
 
 # user login and returns token
 @app.route('/login', methods=['POST'])
@@ -221,7 +227,8 @@ def logout_all(current_user):
 # def protected(current_user):
 #     return jsonify({'message': 'This is a protected API endpoint.', 'current_user': current_user})
 
-# CRUD functions for posts
+# Example CRUD functions for posts (NOT USED) -----------------------------------------------
+'''
 # get all posts
 @app.route('/posts/all', methods=['GET'])
 def get_posts():
@@ -351,6 +358,8 @@ def delete_post(current_user):
     else:
         raise ValueError('Post not found')
 
+# -----------------------------------------------
+'''
 # create diet plan
 @app.route('/dietplans', methods=['POST'])
 @token_required
